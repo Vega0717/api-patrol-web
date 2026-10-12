@@ -1,0 +1,23 @@
+/* 大屏基础样式：深色背景 + 等宽数字，监控大屏的经典配色。
+ * 别在这个文件里花超过 10 分钟，能看就行，好看是锦上添花。 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  min-height: 100vh;
+}
+
+.panel {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.panel-title {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
