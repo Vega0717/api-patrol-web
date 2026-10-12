@@ -10,7 +10,6 @@
  * 数据流一句话：api.js 里 fetchRuns() 拿到后端 JSON → 存进 ref → 模板自动重渲染。
  * 「ref 变了，页面跟着变」就是 Vue 的核心卖点，术语叫响应式。
  */
-import { ref, onMounted } from 'vue'
 import { fetchRuns, fetchRunDetail } from './api.js'
 import RunChart from './components/RunChart.vue'
 
@@ -21,7 +20,9 @@ import RunChart from './components/RunChart.vue'
 // 3. loading     —— 加载中标记，初始 true，数据到手后设 false
 // 提示：const runs = ref([])
 // 在这里写 ↓
-
+const runs=ref([])
+const latestDetail=ref(null)
+const loading=ref(true)
 
 // ---------- TODO-2：页面挂载后自动加载数据 ----------
 // onMounted(() => { ... }) 的意思：组件渲染完成后执行一次，发请求的时机就在这。
@@ -32,12 +33,28 @@ import RunChart from './components/RunChart.vue'
 //   3. loading.value = false
 //   4. 整个流程用 try { ... } catch (e) { alert(e.message) } 兜底
 // 在这里写 ↓
+onMounted(async () => {
+                      try {
+                        runs.value = await fetchRuns(50)
+                        if (runs.value.length > 0) {
+                          latestDetail.value = await fetchRunDetail(runs.value[0].id)
+                        }
+                      } catch (e) {
+                        alert(e.message)
+                      } finally {
+                        loading.value = false
+                      }
+                    })
 
 
 // ---------- TODO-3：给图表组件喂失败原因列表（明天图表部分用，今天先跳过） ----------
 // 大屏失败列表要展示 latestDetail.results 里 passed === false 的条目
 // 提示：computed(() => ...) 是「自动跟随依赖重算的值」
 // 在这里写 ↓
+ const failedItems = computed(() => {
+   if (!latestDetail.value) return []
+   return latestDetail.value.results.filter(r => !r.passed)
+ })
 
 
 // ---------- 图表（明天做，今天看看长什么样就行） ----------
@@ -60,14 +77,21 @@ const chartRuns = ref([])
          ② 通过数 latestDetail.run.passed
          ③ 失败数 latestDetail.run.failed
          每张卡片结构参考下面的示例卡片，改成自己的数据（注意 v-if 条件要能防 latestDetail 为 null）-->
-    <div v-if="!loading" class="cards">
-      <!-- 示例卡片（照这个格式做另外两张）：
-      <div class="panel card">
-        <div class="panel-title">卡片标题</div>
-        <div class="card-value">{{ 想显示的变量 }}</div>
-      </div>
-      -->
-    </div>
+        <div v-if="!loading && latestDetail" class="cards">
+          <div class="panel card">
+            <div class="panel-title">最新一轮完成时间</div>
+            <div class="card-value">{{ latestDetail.run.finishedAt }}</div>
+          </div>
+          <div class="panel card">
+            <div class="panel-title">通过</div>
+            <div class="card-value" style="color: #4ade80;">{{ latestDetail.run.passed }}</div>
+          </div>
+          <div class="panel card">
+            <div class="panel-title">失败</div>
+            <div class="card-value" style="color: #f87171;">{{ latestDetail.run.failed }}</div>
+          </div>
+        </div>
+
 
     <!-- 图表明天接入：给你留好位置 -->
     <RunChart :runs="chartRuns" />
