@@ -12,7 +12,9 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8081',
+        // 写 127.0.0.1 而不是 localhost：新版 Node 会把 localhost 解析成 IPv6 的 ::1，
+        // 而 Spring Boot 默认只监听 IPv4，写 localhost 可能连接被拒（实测踩过）。
+        target: 'http://127.0.0.1:8081',
         changeOrigin: true
       }
     }

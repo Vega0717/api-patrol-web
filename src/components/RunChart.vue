@@ -35,8 +35,23 @@ function emptyOption() {
 }
 
 function buildOption(runs) {
-  // TODO（明天填）：x 轴 = startedAt 时间，y 轴 = passed/failed 数量或耗时
-  return {}
+  // TODO-1：x 轴时间
+  const times = runs.map(r => r.startedAt.substring(5, 16).replace('T', ' '))
+
+  // TODO-2：两条线
+  const passedData = runs.map(r => r.passed)
+  const failedData = runs.map(r => r.failed)
+
+  return {
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['通过', '失败'], textStyle: { color: '#94a3b8' } },
+    xAxis: { type: 'category', data: times, axisLabel: { color: '#94a3b8' } },
+    yAxis: { type: 'value', axisLabel: { color: '#94a3b8' } },
+    series: [
+      { name: '通过', type: 'line', data: passedData, smooth: true, itemStyle: { color: '#4ade80' } },
+      { name: '失败', type: 'line', data: failedData, smooth: true, itemStyle: { color: '#f87171' } }
+    ]
+  }
 }
 </script>
 

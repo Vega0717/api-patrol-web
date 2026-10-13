@@ -10,6 +10,7 @@
  * 数据流一句话：api.js 里 fetchRuns() 拿到后端 JSON → 存进 ref → 模板自动重渲染。
  * 「ref 变了，页面跟着变」就是 Vue 的核心卖点，术语叫响应式。
  */
+import { ref, onMounted, computed } from 'vue'
 import { fetchRuns, fetchRunDetail } from './api.js'
 import RunChart from './components/RunChart.vue'
 
@@ -36,6 +37,7 @@ const loading=ref(true)
 onMounted(async () => {
                       try {
                         runs.value = await fetchRuns(50)
+                        chartRuns.value = runs.value
                         if (runs.value.length > 0) {
                           latestDetail.value = await fetchRunDetail(runs.value[0].id)
                         }
