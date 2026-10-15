@@ -100,6 +100,13 @@ const chartRuns = ref([])
 
     <!-- TODO-5（今天可不做）：失败列表
          v-for 遍历失败条目，显示 caseName / httpStatus / failures -->
+             <div class="panel">
+               <div class="panel-title">失败用例</div>
+               <p v-if="failedItems.length === 0">本轮全部通过 ✓</p>
+               <div v-for="item in failedItems" :key="item.id" class="fail-row">
+                 {{ item.caseName }} · HTTP {{ item.httpStatus }} · {{ item.failures }}
+               </div>
+             </div>
   </div>
 </template>
 
@@ -112,4 +119,5 @@ h1 { font-size: 22px; }
 .cards { display: flex; gap: 16px; margin-bottom: 16px; }
 .card { flex: 1; text-align: center; }
 .card-value { font-size: 28px; font-weight: 700; }
+.fail-row { padding: 8px 12px; border-left: 3px solid #f87171; margin-bottom: 8px; font-size: 13px; color: #94a3b8; }
 </style>
